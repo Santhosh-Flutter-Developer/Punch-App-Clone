@@ -44,6 +44,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage> {
   bool emailChanged = false;
   bool emailCheck = false;
   bool mobileCheck = false;
+  bool isSameAddress = false;
   final stepKeys = List.generate(4, (_) => GlobalKey<FormState>());
   bool isLoading = false;
   bool get isEdit => widget.employee != null;
@@ -1032,7 +1033,6 @@ class _StepBasicState extends State<_StepBasic> {
                               )
                             : null,
                         validator: (v) {
-                          
                           if (v?.isEmpty == true) {
                             return 'Mobile Number is Required';
                           }
@@ -1300,11 +1300,36 @@ class _StepAddress extends StatelessWidget {
                     md: 12,
                     sm: 12,
                     xs: 12,
-                    child: _SriField(
-                      state.aadharAddress,
-                      'Aadhar Registered Address',
-                      Icons.credit_card_outlined,
-                      maxLines: 3,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: state.isSameAddress,
+                              onChanged: (v) => state.setState(
+                                () {
+                                  state.isSameAddress = v ?? false;
+                                  if (state.isSameAddress) {
+                                    state.aadharAddress.text =
+                                        state.address.text;
+                                  } else {
+                                    state.aadharAddress.clear();
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text('Same as Full Address'),
+                          ],
+                        ),
+                        _SriField(
+                          state.aadharAddress,     
+                          'Aadhar Registered Address',
+                          Icons.credit_card_outlined,
+                          maxLines: 3,
+                          readOnly: state.isSameAddress,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -1628,20 +1653,23 @@ class _StepLoginDocs extends StatelessWidget {
                     xs: 12,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 16.0),
-                      child:Obx(()=> SriTextField(
-                        controller: state.password,
-                        label: !state.isEdit ? 'Password *' : 'Password',
-                        prefixIcon: Icons.lock_outline_rounded,
-                        suffixIcon: passwordVisible.value
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        onSuffixTap: () => passwordVisible.value = !passwordVisible.value,
-                        obscureText: !passwordVisible.value,
-                        hint: 'Leave blank for no login access',
-                        validator: !state.isEdit || state.emailChanged
-                            ? validatePassword
-                            : null,
-                      )),
+                      child: Obx(
+                        () => SriTextField(
+                          controller: state.password,
+                          label: !state.isEdit ? 'Password *' : 'Password',
+                          prefixIcon: Icons.lock_outline_rounded,
+                          suffixIcon: passwordVisible.value
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          onSuffixTap: () =>
+                              passwordVisible.value = !passwordVisible.value,
+                          obscureText: !passwordVisible.value,
+                          hint: 'Leave blank for no login access',
+                          validator: !state.isEdit || state.emailChanged
+                              ? validatePassword
+                              : null,
+                        ),
+                      ),
                     ),
                   ),
                 ],

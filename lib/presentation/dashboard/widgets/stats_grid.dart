@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:punch_app/routes/app_routes.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:punch_app/core/theme/app_colors.dart';
 import 'package:punch_app/data/models/dashboard_stats_model.dart';
@@ -18,6 +20,9 @@ class StatsGrid extends StatelessWidget {
         icon: Icons.people_rounded,
         color: AppColors.primary,
         subtitle: 'Active employees',
+        onTap:(){
+          Get.toNamed(AppRoutes.routeAttendance);
+        }
       ),
       StatCard(
         label: 'Present Today',
@@ -25,6 +30,9 @@ class StatsGrid extends StatelessWidget {
         icon: Icons.check_circle_rounded,
         color: AppColors.success,
         subtitle: 'Punched in today',
+        onTap:(){
+          Get.toNamed(AppRoutes.routeAttendance);
+        }
       ),
       StatCard(
         label: 'Absent Today',
@@ -32,6 +40,9 @@ class StatsGrid extends StatelessWidget {
         icon: Icons.cancel_rounded,
         color: AppColors.error,
         subtitle: 'Not present today',
+        onTap:(){
+          Get.toNamed(AppRoutes.routeAttendance);
+        }
       ),
       StatCard(
         label: 'On Leave',
@@ -39,6 +50,9 @@ class StatsGrid extends StatelessWidget {
         icon: Icons.event_busy_rounded,
         color: AppColors.warning,
         subtitle: 'Approved leaves',
+        onTap:(){
+          Get.toNamed(AppRoutes.routeAttendance);
+        }
       ),
     ];
 

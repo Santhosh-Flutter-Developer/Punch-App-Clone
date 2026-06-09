@@ -5,6 +5,7 @@ import 'package:punch_app/data/utils/network_time.dart';
 import 'package:punch_app/presentation/attendance/controller/attendance_controller.dart';
 import 'package:punch_app/presentation/attendance/widgets/date_tap_box.dart';
 import 'package:punch_app/presentation/attendance/widgets/quick_btn.dart';
+import 'package:punch_app/presentation/attendance/widgets/searchable_employee_dropdown.dart';
 import 'package:punch_app/presentation/auth/controller/auth_controller.dart';
 import 'package:punch_app/presentation/employee/controller/employee_controller.dart';
 
@@ -138,14 +139,26 @@ class FilterSheetState extends State<FilterSheet> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  QuickBtn('Today', () => quickSelect('today'),
-                      isSelected: selectedPreset == 'today'),
-                  QuickBtn('This Week', () => quickSelect('week'),
-                      isSelected: selectedPreset == 'week'),
-                  QuickBtn('This Month', () => quickSelect('month'),
-                      isSelected: selectedPreset == 'month'),
-                  QuickBtn('Last Month', () => quickSelect('last_month'),
-                      isSelected: selectedPreset == 'last_month'),
+                  QuickBtn(
+                    'Today',
+                    () => quickSelect('today'),
+                    isSelected: selectedPreset == 'today',
+                  ),
+                  QuickBtn(
+                    'This Week',
+                    () => quickSelect('week'),
+                    isSelected: selectedPreset == 'week',
+                  ),
+                  QuickBtn(
+                    'This Month',
+                    () => quickSelect('month'),
+                    isSelected: selectedPreset == 'month',
+                  ),
+                  QuickBtn(
+                    'Last Month',
+                    () => quickSelect('last_month'),
+                    isSelected: selectedPreset == 'last_month',
+                  ),
                 ],
               ),
             ),
@@ -179,9 +192,24 @@ class FilterSheetState extends State<FilterSheet> {
               ],
             ),
             const SizedBox(height: 14),
+            Obx(() {
+              final allEmps = empCtrl.employees;
+              final emps = auth.isAdmin
+                  ? allEmps
+                  : allEmps.where((e) => e.id == auth.employeeId).toList();
+              final ids = emps.map((e) => e.id).toList();
+              final safe = ids.contains(empId) ? empId : null;
+
+              return SearchableEmployeeDropdown(
+                employees: emps,
+                value: safe,
+                isAdmin: auth.isAdmin,
+                onChanged: (v) => setState(() => empId = v),
+              );
+            }),
 
             // Employee filter
-            Obx(() {
+            /*Obx(() {
               final allEmps = empCtrl.employees;
               // ✅ Non-admin sees only themselves
               final emps = auth.isAdmin
@@ -237,7 +265,7 @@ class FilterSheetState extends State<FilterSheet> {
                     ? (v) => setState(() => empId = v)
                     : null,
               );
-            }),
+            }),*/
             const SizedBox(height: 20),
 
             // Apply / Reset
