@@ -74,11 +74,20 @@ class AttendanceController extends GetxController {
           repo.getActiveEmployees(
             auth.companyId,
             departmentId: filterDepartmentId.value,
+          )
+        else if (auth.employeeId != null)
+          repo.getActiveEmployees(
+            auth.companyId,
           ),
       ]);
       logs.value = results[0] as List<AttendanceLogModel>;
       if (auth.isAdmin) {
         allEmployees.value = results[1] as List<EmployeeModel>;
+      } else if (auth.employeeId != null && results.length > 1) {
+        // Store just own record so absent-row injection has employee object
+        final all = results[1] as List<EmployeeModel>;
+        allEmployees.value =
+            all.where((e) => e.id == auth.employeeId).toList();
       }
     } catch (e) {
       debugPrint('[AttendCtrl] load error: $e');
@@ -161,16 +170,18 @@ class AttendanceController extends GetxController {
       row['totalMins'] = totalMins;
     }
 
-    // Step 3: inject absent rows for employees with no log on each date in range
-    if (auth.isAdmin && allEmployees.isNotEmpty) {
-      final from = fromDate.value;
-      final to = toDate.value;
-      if (from != null && to != null) {
-        final presentKeys = map.keys.toSet();
-        DateTime cursor = DateTime(from.year, from.month, from.day);
-        final end = DateTime(to.year, to.month, to.day);
+    // Step 3: inject absent rows
+    final from = fromDate.value;
+    final to   = toDate.value;
+    if (from != null && to != null) {
+      final presentKeys = map.keys.toSet();
+      DateTime cursor = DateTime(from.year, from.month, from.day);
+      final end = DateTime(to.year, to.month, to.day);
+
+      if (auth.isAdmin && allEmployees.isNotEmpty) {
+        // Admin: inject for every active employee on every date
         while (!cursor.isAfter(end)) {
-          final dateStr = cursor.toIso8601String().substring(0, 10);
+          final dateStr  = cursor.toIso8601String().substring(0, 10);
           final dateCopy = cursor;
           for (final emp in allEmployees) {
             if (filterEmployeeId.value != null &&
@@ -182,14 +193,36 @@ class AttendanceController extends GetxController {
             if (!presentKeys.contains(key)) {
               map[key] = {
                 'employeeId': emp.id,
-                'employee': emp,
-                'date': dateCopy,
-                'inLogs': <AttendanceLogModel>[],
-                'outLogs': <AttendanceLogModel>[],
-                'totalMins': 0,
-                'isAbsent': true,
+                'employee':   emp,
+                'date':       dateCopy,
+                'inLogs':     <AttendanceLogModel>[],
+                'outLogs':    <AttendanceLogModel>[],
+                'totalMins':  0,
+                'isAbsent':   true,
               };
             }
+          }
+          cursor = cursor.add(const Duration(days: 1));
+        }
+      } else if (!auth.isAdmin && auth.employeeId != null) {
+        // Regular user: inject absent rows for every date they didn't punch
+        final existingEmp = allEmployees.isNotEmpty
+            ? allEmployees.first
+            : (map.values.isNotEmpty ? map.values.first['employee'] : null);
+        while (!cursor.isAfter(end)) {
+          final dateStr  = cursor.toIso8601String().substring(0, 10);
+          final dateCopy = cursor;
+          final key = '${auth.employeeId}_$dateStr';
+          if (!presentKeys.contains(key)) {
+            map[key] = {
+              'employeeId': auth.employeeId,
+              'employee':   existingEmp,
+              'date':       dateCopy,
+              'inLogs':     <AttendanceLogModel>[],
+              'outLogs':    <AttendanceLogModel>[],
+              'totalMins':  0,
+              'isAbsent':   true,
+            };
           }
           cursor = cursor.add(const Duration(days: 1));
         }
