@@ -114,7 +114,7 @@ class FaceRecognitionViewState extends State<FaceDetection> {
   Future<void> _loadTodayLogs() async {
     if (employee == null) return;
     if (employee!.id.isEmpty) return;
-    if(employee!.companyId.isEmpty) return;
+    if (employee!.companyId.isEmpty) return;
     final today = NetworkTime.now().toIso8601String().substring(0, 10);
     try {
       final rows = await attendanceController.repo.getAttendanceLogs(
@@ -206,7 +206,7 @@ class FaceRecognitionViewState extends State<FaceDetection> {
     final employees = await EmployeeRepository().getAllEmployees(
       auth.kioskCompId.value,
     );
-    allEmployees.value =employees.isNotEmpty? employees : [];
+    allEmployees.value = employees.isNotEmpty ? employees : [];
   }
 
   Future<bool> onFaceDetected(faces) async {
@@ -413,7 +413,9 @@ class FaceRecognitionViewState extends State<FaceDetection> {
           await NetworkTime.syncTime();
           if (!mounted) return false;
           // ── Load today's punch history ────────────────────
-          if (employee != null && employee!.id.isNotEmpty && employee!.companyId.isNotEmpty) {
+          if (employee != null &&
+              employee!.id.isNotEmpty &&
+              employee!.companyId.isNotEmpty) {
             await _loadTodayLogs();
           }
           if (!mounted) return false;
@@ -448,7 +450,11 @@ class FaceRecognitionViewState extends State<FaceDetection> {
     // Pre-select the required type
     String selectedType = mustBeOut ? 'out' : 'in';
 
-    await showModalBottomSheet(
+    Future.delayed(Duration(seconds: 1), () async {
+      Navigator.of(context).pop();
+      await _savePunch(selectedType);
+    });
+    /*await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -478,7 +484,7 @@ class FaceRecognitionViewState extends State<FaceDetection> {
           Get.offAllNamed(AppRoutes.routeKioskAttendance);
         },
       ),
-    );
+    );*/
   }
 
   Future<void> _savePunch(String punchType) async {
@@ -791,7 +797,7 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                 ),
               ),
               const SizedBox(height: 20),
-      
+
               // ── Header ────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -868,11 +874,11 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                   ],
                 ),
               ),
-      
+
               const SizedBox(height: 20),
               const Divider(height: 1, color: AppColors.border),
               const SizedBox(height: 20),
-      
+
               // ── Today's Punch History ─────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1052,9 +1058,9 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                   ],
                 ),
               ),
-      
+
               const SizedBox(height: 20),
-      
+
               // ── Punch Type Selector ───────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1090,7 +1096,9 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                             color: AppColors.success,
                             selected: selectedType == 'in',
                             disabled: widget.mustBeOut,
-                            onTap: widget.mustBeOut ? null : () => _select('in'),
+                            onTap: widget.mustBeOut
+                                ? null
+                                : () => _select('in'),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -1102,12 +1110,14 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                             color: AppColors.error,
                             selected: selectedType == 'out',
                             disabled: widget.mustBeIn,
-                            onTap: widget.mustBeIn ? null : () => _select('out'),
+                            onTap: widget.mustBeIn
+                                ? null
+                                : () => _select('out'),
                           ),
                         ),
                       ],
                     ),
-      
+
                     // ── Validation error ────────────────────
                     if (validationError != null) ...[
                       const SizedBox(height: 10),
@@ -1142,7 +1152,7 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                         ),
                       ),
                     ],
-      
+
                     // ── Info hint ───────────────────────────
                     if (validationError == null) ...[
                       const SizedBox(height: 10),
@@ -1181,9 +1191,9 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                   ],
                 ),
               ),
-      
+
               const SizedBox(height: 20),
-      
+
               // ── Action Buttons ────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

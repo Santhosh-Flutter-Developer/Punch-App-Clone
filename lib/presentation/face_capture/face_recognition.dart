@@ -438,8 +438,12 @@ class FaceRecognitionViewState extends State<FaceRecognitionView> {
 
     // Pre-select the required type
     String selectedType = mustBeOut ? 'out' : 'in';
+    Future.delayed(Duration(seconds: 1), () async {
+      Navigator.of(context).pop();
+      await _savePunch(selectedType);
+    });
 
-    await showModalBottomSheet(
+    /*await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -470,7 +474,7 @@ class FaceRecognitionViewState extends State<FaceRecognitionView> {
           Get.offAllNamed(AppRoutes.routeDashboard);
         },
       ),
-    );
+    );*/
   }
 
   Future<void> _savePunch(String punchType) async {
@@ -783,7 +787,7 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                 ),
               ),
               const SizedBox(height: 20),
-      
+
               // ── Header ────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -860,11 +864,11 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                   ],
                 ),
               ),
-      
+
               const SizedBox(height: 20),
               const Divider(height: 1, color: AppColors.border),
               const SizedBox(height: 20),
-      
+
               // ── Today's Punch History ─────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1044,9 +1048,9 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                   ],
                 ),
               ),
-      
+
               const SizedBox(height: 20),
-      
+
               // ── Punch Type Selector ───────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1082,7 +1086,9 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                             color: AppColors.success,
                             selected: selectedType == 'in',
                             disabled: widget.mustBeOut,
-                            onTap: widget.mustBeOut ? null : () => _select('in'),
+                            onTap: widget.mustBeOut
+                                ? null
+                                : () => _select('in'),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -1094,12 +1100,14 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                             color: AppColors.error,
                             selected: selectedType == 'out',
                             disabled: widget.mustBeIn,
-                            onTap: widget.mustBeIn ? null : () => _select('out'),
+                            onTap: widget.mustBeIn
+                                ? null
+                                : () => _select('out'),
                           ),
                         ),
                       ],
                     ),
-      
+
                     // ── Validation error ────────────────────
                     if (validationError != null) ...[
                       const SizedBox(height: 10),
@@ -1134,7 +1142,7 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                         ),
                       ),
                     ],
-      
+
                     // ── Info hint ───────────────────────────
                     if (validationError == null) ...[
                       const SizedBox(height: 10),
@@ -1173,9 +1181,9 @@ class _PunchSelectorSheetState extends State<_PunchSelectorSheet> {
                   ],
                 ),
               ),
-      
+
               const SizedBox(height: 20),
-      
+
               // ── Action Buttons ────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

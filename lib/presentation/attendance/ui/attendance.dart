@@ -4,6 +4,7 @@ import 'package:punch_app/core/theme/app_colors.dart';
 import 'package:punch_app/presentation/attendance/controller/attendance_controller.dart';
 import 'package:punch_app/presentation/attendance/widgets/date_range_strip.dart';
 import 'package:punch_app/presentation/attendance/widgets/grid_view.dart';
+import 'package:punch_app/presentation/attendance/widgets/pagination_bar.dart';
 import 'package:punch_app/presentation/attendance/widgets/summary_strip.dart';
 import 'package:punch_app/presentation/attendance/widgets/table_view.dart';
 import 'package:punch_app/presentation/attendance/widgets/view_toggle_btn.dart';
@@ -135,8 +136,8 @@ class Attendance extends StatelessWidget {
                 if (controller.isLoading.value) {
                   return const LoadingOverlay();
                 }
-                final rows = controller.groupedByEmployeeDate;
-                if (rows.isEmpty) {
+                final allRows = controller.groupedByEmployeeDate;
+                if (allRows.isEmpty) {
                   return EmptyState(
                     message: "No attendance records for the selected period",
                     icon: Icons.assessment_outlined,
@@ -145,9 +146,25 @@ class Attendance extends StatelessWidget {
                         controller.showFilterSheet(context, controller),
                   );
                 }
-                return controller.viewMode.value == 'table'
-                    ? TableView(rows: rows, controller: controller, auth: auth)
-                    : GridedView(rows: rows, controller: controller, auth: auth);
+                final rows = controller.pagedRows;
+                return Column(
+                  children: [
+                    Expanded(
+                      child: controller.viewMode.value == 'table'
+                          ? TableView(
+                              rows: rows,
+                              controller: controller,
+                              auth: auth,
+                            )
+                          : GridedView(
+                              rows: rows,
+                              controller: controller,
+                              auth: auth,
+                            ),
+                    ),
+                    PaginationBar(controller: controller),
+                  ],
+                );
               }),
             ),
           ],
