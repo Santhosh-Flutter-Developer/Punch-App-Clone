@@ -26,6 +26,7 @@ class Attendance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isWide = MediaQuery.of(context).size.width > 800;
+
     return SafeArea(
       top: false,
       child: AppShell(
@@ -97,12 +98,63 @@ class Attendance extends StatelessWidget {
             SummaryStrip(controller: controller),
             const Divider(height: 1.0, color: AppColors.border),
             if (!isWide)
-              Obx(
-                () => Padding(
+              Obx(() {
+                final total = controller.groupedByEmployeeDate.length;
+                final page = controller.currentPage.value;
+                final size = controller.pageSize.value;
+                final totalPages = controller.totalPages;
+                final start = total == 0 ? 0 : page * size + 1;
+                final end = (page * size + size).clamp(0, total);
+                return Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      Row(
+                        children: [
+                          const Text(
+                            'Rows per page:',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            height: 32,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceVariant,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: AppColors.border),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<int>(
+                                value: size,
+                                isDense: true,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.textPrimary,
+                                ),
+                                items: controller.pageSizeOptions
+                                    .map(
+                                      (v) => DropdownMenuItem(
+                                        value: v,
+                                        child: Text('$v'),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (v) {
+                                  if (v != null) controller.setPageSize(v);
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
                       Container(
                         decoration: BoxDecoration(
                           color: AppColors.surfaceVariant,
@@ -128,8 +180,8 @@ class Attendance extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-              ),
+                );
+              }),
             // Content
             Expanded(
               child: Obx(() {

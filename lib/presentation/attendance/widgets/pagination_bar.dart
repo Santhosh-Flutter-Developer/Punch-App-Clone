@@ -9,6 +9,7 @@ class PaginationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isWide = MediaQuery.of(context).size.width > 800;
     return Obx(() {
       final total = controller.groupedByEmployeeDate.length;
       final page = controller.currentPage.value;
@@ -26,52 +27,50 @@ class PaginationBar extends StatelessWidget {
         child: Row(
           children: [
             // Rows per page selector
-            Row(
-              children: [
-                const Text(
-                  'Rows per page:',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  height: 32,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceVariant,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<int>(
-                      value: size,
-                      isDense: true,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                      items: controller.pageSizeOptions
-                          .map(
-                            (v) => DropdownMenuItem(
-                              value: v,
-                              child: Text('$v'),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (v) {
-                        if (v != null) controller.setPageSize(v);
-                      },
+            if (isWide)
+              Row(
+                children: [
+                  const Text(
+                    'Rows per page:',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),
-              ],
-            ),
-
-            const Spacer(),
+                  const SizedBox(width: 8),
+                  Container(
+                    height: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceVariant,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: size,
+                        isDense: true,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                        items: controller.pageSizeOptions
+                            .map(
+                              (v) =>
+                                  DropdownMenuItem(value: v, child: Text('$v')),
+                            )
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) controller.setPageSize(v);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            if (isWide) const Spacer(),
 
             // Record range info
             Text(
@@ -82,7 +81,7 @@ class PaginationBar extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-
+            if (!isWide) Spacer(),
             const SizedBox(width: 12),
 
             // Prev button
@@ -150,7 +149,9 @@ class _NavBtn extends StatelessWidget {
               : AppColors.border.withOpacity(0.3),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: enabled ? AppColors.border : AppColors.border.withOpacity(0.4),
+            color: enabled
+                ? AppColors.border
+                : AppColors.border.withOpacity(0.4),
           ),
         ),
         child: Icon(
