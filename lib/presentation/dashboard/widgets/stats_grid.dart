@@ -44,16 +44,16 @@ class StatsGrid extends StatelessWidget {
           Get.toNamed(AppRoutes.routeAttendance);
         }
       ),
-      StatCard(
-        label: 'On Leave',
-        value: '${stats?.leaveCount ?? 0}',
-        icon: Icons.event_busy_rounded,
-        color: AppColors.warning,
-        subtitle: 'Approved leaves',
-        onTap:(){
-          Get.toNamed(AppRoutes.routeAttendance);
-        }
-      ),
+      // StatCard(
+      //   label: 'On Leave',
+      //   value: '${stats?.leaveCount ?? 0}',
+      //   icon: Icons.event_busy_rounded,
+      //   color: AppColors.warning,
+      //   subtitle: 'Approved leaves',
+      //   onTap:(){
+      //     Get.toNamed(AppRoutes.routeAttendance);
+      //   }
+      // ),
     ];
 
     return ResponsiveGridRow(

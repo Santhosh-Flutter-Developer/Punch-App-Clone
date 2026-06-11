@@ -224,11 +224,13 @@ class FaceRecognitionViewState extends State<FaceRecognitionView> {
           AttendanceAudioEvent.multipleFaceDetected,
           _notifLang,
         ); // 🔊
+        Get.back();
         Get.snackbar(
           'Warning',
           'Multiple Face Detected',
           backgroundColor: AppColors.warning,
         );
+        return false;
       }
       var face = faces[0];
 

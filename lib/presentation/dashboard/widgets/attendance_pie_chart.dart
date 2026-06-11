@@ -14,8 +14,8 @@ class AttendancePieChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final present = stats?.presentCount.toDouble() ?? 0;
     final absent = stats?.absentCount.toDouble() ?? 0;
-    final onLeave = stats?.leaveCount.toDouble() ?? 0;
-    final total = present + absent + onLeave;
+    // final onLeave = stats?.leaveCount.toDouble() ?? 0;
+    final total = present + absent ;
 
     return SriCard(
       child: Column(
@@ -60,16 +60,16 @@ class AttendancePieChart extends StatelessWidget {
                                   fontSize: 12,
                                 ),
                               ),
-                              PieChartSectionData(
-                                value: onLeave,
-                                color: AppColors.warning,
-                                title: '${onLeave.toInt()}',
-                                titleStyle: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 12,
-                                ),
-                              ),
+                              // PieChartSectionData(
+                              //   value: onLeave,
+                              //   color: AppColors.warning,
+                              //   title: '${onLeave.toInt()}',
+                              //   titleStyle: const TextStyle(
+                              //     color: Colors.white,
+                              //     fontWeight: FontWeight.w700,
+                              //     fontSize: 12,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -91,11 +91,11 @@ class AttendancePieChart extends StatelessWidget {
                             count: absent.toInt(),
                           ),
                           const SizedBox(height: 12),
-                          LegendItem(
-                            color: AppColors.warning,
-                            label: 'On Leave',
-                            count: onLeave.toInt(),
-                          ),
+                          // LegendItem(
+                          //   color: AppColors.warning,
+                          //   label: 'On Leave',
+                          //   count: onLeave.toInt(),
+                          // ),
                         ],
                       ),
                     ],
